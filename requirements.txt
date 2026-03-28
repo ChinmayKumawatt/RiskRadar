@@ -5,3 +5,5 @@ matplotlib
 seaborn
 streamlit
 xgboost
+dill
+joblib
