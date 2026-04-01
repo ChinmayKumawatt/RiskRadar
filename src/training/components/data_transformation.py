@@ -11,17 +11,18 @@ from src.utils.exception import CustomException
 from src.utils.common import save_object
 
 class DataTransformation:
-    try:
-        def __init__(self,train_path,test_path,target_column,save_location_train_arr,save_location_test_arr,preprocessor_path,encoder_path):
-            self.train_path = train_path
-            self.test_path = test_path
-            self.target_column = target_column
-            self.save_location_train_arr = save_location_train_arr
-            self.save_location_test_arr = save_location_test_arr
-            self.preprocessor_path = preprocessor_path
-            self.encoder_path = encoder_path
+    
+    def __init__(self,train_path,test_path,target_column,save_location_train_arr,save_location_test_arr,preprocessor_path,encoder_path):
+        self.train_path = train_path
+        self.test_path = test_path
+        self.target_column = target_column
+        self.save_location_train_arr = save_location_train_arr
+        self.save_location_test_arr = save_location_test_arr
+        self.preprocessor_path = preprocessor_path
+        self.encoder_path = encoder_path
 
-        def initiate_data_transformation(self):
+    def initiate_data_transformation(self):
+        try:
             train_df = pd.read_csv(self.train_path)
             test_df = pd.read_csv(self.test_path)
             logger.info("Datasets Read Successfully")
@@ -84,6 +85,5 @@ class DataTransformation:
             save_object(self.encoder_path, label_encoder)
             logger.info("Preprocessor and encoder saved")
             return train_arr,test_arr
-        
-    except Exception as e:
-        raise CustomException(e,sys)
+        except Exception as e:
+            raise CustomException(e,sys)
