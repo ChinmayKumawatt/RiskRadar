@@ -21,11 +21,7 @@ class DataIngestion:
 
             df = pd.read_csv(self.dataset_path)
             logger.info("Dataset Read")
-            df = df.drop_duplicates()
-            df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
-            df.replace('?', np.nan, inplace=True)
-
-            logger.info("Basic Validation done")
+      
             X = df[self.selected_features]
             y = df[self.target_column]
             
