@@ -1,0 +1,39 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+myenv/
+venv/
+env/
+
+# Data files
+data/
+*.csv
+
+# Artifacts (VERY IMPORTANT)
+artifacts/
+
+# Model files
+*.pkl
+*.joblib
+
+# Numpy arrays
+*.npy
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment variables
+.env

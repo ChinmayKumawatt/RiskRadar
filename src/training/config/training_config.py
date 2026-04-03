@@ -12,6 +12,7 @@ class DataIngestionConfig:
         self.test_path = os.path.join(ingestion_dir, "test.csv")
         self.selected_features = []
         self.target_column = None
+        self.dataset_path = None
 
 
 class DataValidationConfig:
@@ -43,7 +44,7 @@ class DataTransformationConfig:
         self.save_location_test_arr = os.path.join(transformation_dir, "test.npy")
 
         self.preprocessor_path = os.path.join(transformation_dir, "preprocessor.pkl")
-        self.encoder_path = os.path.join(transformation_dir, "label_encoder.pkl")
+        self.encoder_path = os.path.join(transformation_dir, "encoder.pkl")
 
 
 class ModelTrainerConfig:

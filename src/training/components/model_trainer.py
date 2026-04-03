@@ -73,7 +73,7 @@ class ModelTrainer:
             best_score = models_report[best_model_name]["metrics"]["test_f1"]
 
             best_threshold = models_report[best_model_name]["best_threshold"]
-
+            os.makedirs(os.path.dirname(self.config.model_save_path), exist_ok=True)
             save_object(self.config.model_save_path, best_model)
 
             return ModelTrainerArtifact(

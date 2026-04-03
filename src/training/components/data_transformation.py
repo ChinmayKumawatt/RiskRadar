@@ -30,12 +30,24 @@ class DataTransformation:
 
             X_train = train_df.drop(self.config.target_column,axis=1)
             X_test = test_df.drop(self.config.target_column,axis=1)
+            # DPF Mapping
+            if "DiabetesPedigreeFunction" in X_train.columns:
+                def map_dpf(val):
+                    if val < 0.3:
+                        return "low"
+                    elif val < 0.6:
+                        return "medium"
+                    else:
+                        return "high"
+
+                X_train["DPF_mapped"] = X_train["DiabetesPedigreeFunction"].apply(map_dpf)
+                X_test["DPF_mapped"] = X_test["DiabetesPedigreeFunction"].apply(map_dpf)
             y_train = train_df[self.config.target_column]
             y_test = test_df[self.config.target_column]
             logger.info("DataSet Splitted Successfully")
             label_encoder = LabelEncoder()
 
-            if y_train.dtype == "object":
+            if y_train.dtype == "object" or y_train.dtype.name == "category":
                 y_train = label_encoder.fit_transform(y_train)
                 y_test = label_encoder.transform(y_test)
             logger.info("Target Values Handled Successfully")
@@ -66,13 +78,14 @@ class DataTransformation:
             test_features_processed = preprocessor.transform(X_test)
             logger.info("Preprocessed train and test")
             
-            train_arr = np.c_[
-                    train_features_processed,np.array(y_train)
-                ]
+            from scipy.sparse import issparse
 
-            test_arr = np.c_[
-                test_features_processed,np.array(y_test)
-            ]
+            if issparse(train_features_processed):
+                train_features_processed = train_features_processed.toarray()
+                test_features_processed = test_features_processed.toarray()
+
+            train_arr = np.c_[train_features_processed, np.array(y_train)]
+            test_arr = np.c_[test_features_processed, np.array(y_test)]
 
             os.makedirs(os.path.dirname(self.config.save_location_train_arr), exist_ok=True)
             os.makedirs(os.path.dirname(self.config.save_location_test_arr), exist_ok=True)
