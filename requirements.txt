@@ -1,9 +1,12 @@
 pandas
 numpy
 scikit-learn
+scipy
 matplotlib
 seaborn
 streamlit
 xgboost
 dill
 joblib
+fastapi
+uvicorn

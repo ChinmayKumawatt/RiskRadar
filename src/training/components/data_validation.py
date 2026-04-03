@@ -14,6 +14,33 @@ class DataValidationArtifact:
 class DataValidation:
     def __init__(self,config):
         self.config  = config
+
+    @staticmethod
+    def _normalize_feature_column(series):
+        if series.dtype != "object":
+            return pd.to_numeric(series, errors="coerce")
+
+        normalized = series.astype(str).str.strip().str.lower()
+        normalized = normalized.replace({"?": np.nan, "nan": np.nan})
+
+        category_mapping = {
+            "yes": 1,
+            "no": 0,
+            "good": 1,
+            "poor": 0,
+            "present": 1,
+            "notpresent": 0,
+            "abnormal": 1,
+            "normal": 0,
+            "ckd": 1,
+            "notckd": 0,
+        }
+
+        mapped = normalized.map(lambda value: category_mapping.get(value, value))
+        numeric = pd.to_numeric(mapped, errors="coerce")
+
+        return numeric
+
     def initiate_data_validation(self):
         try:
             train_df = pd.read_csv(self.config.train_path)
@@ -41,7 +68,7 @@ class DataValidation:
 
             for col in self.config.selected_features:
                 if col != self.config.target_column:
-                    train_df[col] = pd.to_numeric(train_df[col], errors='coerce')
+                    train_df[col] = self._normalize_feature_column(train_df[col])
 
             logger.info("Numerical Columns fixed ")
 
@@ -53,7 +80,7 @@ class DataValidation:
 
             for col in self.config.selected_features:
                 if col != self.config.target_column:
-                    test_df[col] = pd.to_numeric(test_df[col], errors='coerce')
+                    test_df[col] = self._normalize_feature_column(test_df[col])
 
             if self.config.target_column not in train_df.columns:
                 raise CustomException("Target column missing in train data", sys)

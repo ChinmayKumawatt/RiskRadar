@@ -22,6 +22,15 @@ class DataIngestion:
 
             df = pd.read_csv(self.config.dataset_path)
             logger.info("Dataset Read")
+
+            subset_columns = self.config.selected_features + [self.config.target_column]
+            original_rows = len(df)
+            df = df.drop_duplicates(subset=subset_columns)
+            logger.info(
+                "Dataset deduplicated from %s to %s rows",
+                original_rows,
+                len(df)
+            )
       
             X = df[self.config.selected_features]
             y = df[self.config.target_column]

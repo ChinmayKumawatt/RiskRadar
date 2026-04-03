@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiskRadar Intake</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="page-shell">
+        <aside class="hero-panel">
+            <p class="eyebrow">RiskRadar</p>
+            <h1>Multi-disease screening, one guided intake.</h1>
+            <p class="hero-copy">
+                Shared inputs like age, sex, and BMI are captured once and reused across
+                heart, diabetes, kidney, and hypertension risk models.
+            </p>
+            <div class="hero-card">
+                <p class="hero-card-label">Flow</p>
+                <ol>
+                    <li>General information</li>
+                    <li>Lifestyle and vitals</li>
+                    <li>Heart risk details</li>
+                    <li>Diabetes details</li>
+                    <li>Kidney details</li>
+                    <li>Review and predict</li>
+                </ol>
+            </div>
+        </aside>
+
+        <main class="form-panel">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Local Test UI</p>
+                    <h2>Patient Intake Form</h2>
+                </div>
+                <div class="progress-shell">
+                    <div class="progress-label">
+                        <span id="stepLabel">Step 1 of 6</span>
+                        <span id="stepTitle">General information</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </header>
+
+            <form id="riskForm" class="wizard-form">
+                <section class="step-card active" data-step="0" data-title="General information">
+                    <div class="section-heading">
+                        <h3>General information</h3>
+                        <p>Collect the shared identity and baseline inputs once.</p>
+                    </div>
+
+                    <div class="field-grid two-up">
+                        <label class="field">
+                            <span>Full name</span>
+                            <input type="text" name="patient_name" placeholder="Aarav Sharma">
+                        </label>
+
+                        <label class="field">
+                            <span>Age</span>
+                            <input type="number" name="age" min="1" max="120" step="1" required>
+                        </label>
+
+                        <label class="field">
+                            <span>Sex</span>
+                            <select name="sex" required>
+                                <option value="">Select</option>
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </label>
+
+                        <label class="field">
+                            <span>BMI</span>
+                            <input type="number" name="bmi" min="1" max="80" step="0.1" required>
+                            <select class="preset-select" data-target="bmi">
+                                <option value="">Use my own number</option>
+                                <option value="17.5">Underweight</option>
+                                <option value="22">Healthy range</option>
+                                <option value="27.5">Overweight range</option>
+                                <option value="32">Obesity range</option>
+                                <option value="24">I don't know, use a healthy average</option>
+                            </select>
+                            <small>CDC adult BMI categories informed these presets.</small>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="step-card" data-step="1" data-title="Lifestyle and vitals">
+                    <div class="section-heading">
+                        <h3>Lifestyle and vitals</h3>
+                        <p>These shared vitals are captured once and reused across multiple models.</p>
+                    </div>
+
+                    <div class="field-grid two-up">
+                        <label class="field">
+                            <span>Blood pressure</span>
+                            <input type="number" name="shared_bp" min="0" max="250" step="1" required>
+                            <select class="preset-select" data-target="shared_bp">
+                                <option value="">Use my own number</option>
+                                <option value="105">Lower range</option>
+                                <option value="118">Normal range</option>
+                                <option value="125">Elevated range</option>
+                                <option value="140">High range</option>
+                                <option value="118">I don't know, use a normal value</option>
+                            </select>
+                            <small>Used for heart and diabetes screening.</small>
+                        </label>
+
+                        <label class="field">
+                            <span>Kidney blood pressure</span>
+                            <input type="number" name="ckd_bp" min="0" max="250" step="1" required>
+                            <select class="preset-select" data-target="ckd_bp">
+                                <option value="">Use my own number</option>
+                                <option value="70">Lower kidney-dataset range</option>
+                                <option value="80">Typical kidney-dataset range</option>
+                                <option value="90">Higher kidney-dataset range</option>
+                                <option value="80">I don't know, use a typical value</option>
+                            </select>
+                            <small>This stays separate because the CKD model was trained on a different blood-pressure feature scale.</small>
+                        </label>
+
+                        <label class="field">
+                            <span>Cigarettes per day</span>
+                            <select name="cigsperday" required>
+                                <option value="">Select</option>
+                                <option value="0">None</option>
+                                <option value="5">Light smoker</option>
+                                <option value="10">Moderate smoker</option>
+                                <option value="20">Heavy smoker</option>
+                                <option value="0">I don't know / prefer not to say</option>
+                            </select>
+                            <small>Converted to an approximate daily cigarette count for the model.</small>
+                        </label>
+
+                        <label class="field">
+                            <span>On blood pressure medication?</span>
+                            <select name="bpmeds" required>
+                                <option value="">Select</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                                <option value="0">I don't know</option>
+                            </select>
+                        </label>
+
+                        <label class="field">
+                            <span>Cholesterol</span>
+                            <input type="number" name="shared_cholesterol" min="50" max="700" step="1" required>
+                            <select class="preset-select" data-target="shared_cholesterol">
+                                <option value="">Use my own number</option>
+                                <option value="180">Desirable</option>
+                                <option value="220">Borderline high</option>
+                                <option value="260">High</option>
+                                <option value="190">I don't know, use a common healthy value</option>
+                            </select>
+                            <small>MedlinePlus total cholesterol ranges informed these presets.</small>
+                        </label>
+
+                        <label class="field">
+                            <span>Heart rate</span>
+                            <input type="number" name="heartrate" min="20" max="220" step="1" required>
+                            <select class="preset-select" data-target="heartrate">
+                                <option value="">Use my own number</option>
+                                <option value="55">Low</option>
+                                <option value="72">Normal resting range</option>
+                                <option value="105">High</option>
+                                <option value="72">I don't know, use a normal resting rate</option>
+                            </select>
+                            <small>American Heart Association resting-heart-rate guidance informed these presets.</small>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="step-card" data-step="2" data-title="Heart assessment">
+                    <div class="section-heading">
+                        <h3>Heart assessment</h3>
+                        <p>Model-specific features for coronary risk screening.</p>
+                    </div>
+
+                    <div class="field-grid two-up">
+                        <label class="field">
+                            <span>Chest discomfort pattern</span>
+                            <select name="cp" required>
+                                <option value="">Select</option>
+                                <option value="0">Typical angina-like chest pain</option>
+                                <option value="1">Atypical chest pain</option>
+                                <option value="2">Non-anginal chest discomfort</option>
+                                <option value="3">No chest pain / asymptomatic</option>
+                                <option value="3">I don't know</option>
+                            </select>
+                            <small>This maps your answer to the heart-model chest-pain category.</small>
+                        </label>
+
+                        <label class="field">
+                            <span>Peak exercise heart rate</span>
+                            <input type="number" name="thalach" min="40" max="240" step="1" required>
+                            <select class="preset-select" data-target="thalach">
+                                <option value="">Use my own number</option>
+                                <option value="120">Lower exercise capacity</option>
+                                <option value="150">Average</option>
+                                <option value="180">High</option>
+                                <option value="152">I don't know, use a typical test value</option>
+                            </select>
+                            <small>Most users will not know this exactly. The fallback uses a typical dataset value.</small>
+                        </label>
+
+                        <label class="field">
+                            <span>Chest pain during exercise</span>
+                            <select name="exang" required>
+                                <option value="">Select</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                                <option value="0">I don't know</option>
+                            </select>
+                        </label>
+
+                        <label class="field">
+                            <span>Thal test category</span>
+                            <select name="thal" required>
+                                <option value="">Select</option>
+                                <option value="2">Normal / no known issue</option>
+                                <option value="1">Category 1 result</option>
+                                <option value="3">Category 3 result</option>
+                                <option value="0">Category 0 / unknown-coded</option>
+                                <option value="2">I don't know</option>
+                            </select>
+                            <small>This lab/test field is rarely known by patients. The fallback uses the model's most common category.</small>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="step-card" data-step="3" data-title="Diabetes assessment">
+                    <div class="section-heading">
+                        <h3>Diabetes assessment</h3>
+                        <p>Glucose details for the diabetes model. Shared blood pressure is reused automatically.</p>
+                    </div>
+
+                    <div class="field-grid two-up">
+                        <label class="field">
+                            <span>Glucose level</span>
+                            <input type="number" name="glucose" min="0" max="400" step="1" required>
+                            <select class="preset-select" data-target="glucose">
+                                <option value="">Use my own number</option>
+                                <option value="90">Normal fasting range</option>
+                                <option value="110">Prediabetes range</option>
+                                <option value="140">Diabetes-range high</option>
+                                <option value="95">I don't know, use a normal fasting value</option>
+                            </select>
+                            <small>CDC fasting blood-sugar ranges informed these presets.</small>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="step-card" data-step="4" data-title="Kidney assessment">
+                    <div class="section-heading">
+                        <h3>Kidney assessment</h3>
+                        <p>Kidney-specific inputs. This section uses the CKD blood-pressure field instead of the general one.</p>
+                    </div>
+
+                    <div class="field-grid two-up">
+                        <label class="field">
+                            <span>Hypertension history</span>
+                            <select name="htn" required>
+                                <option value="">Select</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                                <option value="0">I don't know</option>
+                            </select>
+                        </label>
+
+                        <label class="field">
+                            <span>Diabetes history</span>
+                            <select name="dm" required>
+                                <option value="">Select</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                                <option value="0">I don't know</option>
+                            </select>
+                        </label>
+
+                        <label class="field">
+                            <span>Appetite</span>
+                            <select name="appet" required>
+                                <option value="">Select</option>
+                                <option value="1">Good</option>
+                                <option value="0">Poor</option>
+                                <option value="1">I don't know</option>
+                            </select>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="step-card" data-step="5" data-title="Review and predict">
+                    <div class="section-heading">
+                        <h3>Review and predict</h3>
+                        <p>Submit once to receive all four model outputs together.</p>
+                    </div>
+
+                    <div class="review-grid">
+                        <div class="review-card">
+                            <p class="review-label">Shared once</p>
+                            <ul>
+                                <li>Name and age</li>
+                                <li>Sex and BMI</li>
+                                <li>Blood pressure and cholesterol</li>
+                                <li>Lifestyle and vitals</li>
+                            </ul>
+                        </div>
+                        <div class="review-card">
+                            <p class="review-label">Model coverage</p>
+                            <ul>
+                                <li>Heart</li>
+                                <li>Diabetes</li>
+                                <li>CKD</li>
+                                <li>Hypertension</li>
+                            </ul>
+                        </div>
+                        <div class="review-card">
+                            <p class="review-label">Unknown handling</p>
+                            <ul>
+                                <li>Clinical ranges fill measurable values like BMI, glucose, blood pressure, cholesterol, and heart rate.</li>
+                                <li>Rare encoded features fall back to common or neutral model-safe values.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="submit-shell">
+                        <button type="submit" class="primary-button submit-button">
+                            Generate Predictions
+                        </button>
+                        <p id="submitStatus" class="submit-status"></p>
+                    </div>
+                </section>
+
+                <footer class="wizard-footer">
+                    <button type="button" id="prevBtn" class="ghost-button">Back</button>
+                    <button type="button" id="nextBtn" class="primary-button">Next</button>
+                </footer>
+            </form>
+
+            <section class="results-panel" id="resultsPanel">
+                <div class="results-header">
+                    <div>
+                        <p class="eyebrow">Predictions</p>
+                        <h3>Risk summary</h3>
+                    </div>
+                    <p class="results-note" id="resultsNote">Submit the form to see model output.</p>
+                </div>
+                <div id="resultCards" class="result-cards"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
