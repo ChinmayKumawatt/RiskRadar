@@ -13,8 +13,10 @@ env/
 data/
 *.csv
 
-# Artifacts (VERY IMPORTANT)
-artifacts/
+# Artifacts are required for inference deployment
+# Keep them available for Render/GitHub deployment.
+!artifacts/
+!artifacts/**
 
 # Model files
 *.pkl
@@ -37,3 +39,8 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# Deployment artifacts must override generic file ignores above
+!artifacts/*/data_transformation/encoder.pkl
+!artifacts/*/data_transformation/preprocessor.pkl
+!artifacts/*/model/model.pkl
