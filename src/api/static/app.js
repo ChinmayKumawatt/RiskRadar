@@ -112,20 +112,14 @@ function buildResultCard(disease, result) {
 
     card.className = `result-card ${isPositive ? "positive" : "negative"}`;
 
-    const probabilityItems = result.class_probabilities
-        ? Object.entries(result.class_probabilities)
-            .map(
-                ([classLabel, probability]) =>
-                    `<li><strong>${classLabel}</strong>: ${(probability * 100).toFixed(1)}%</li>`
-            )
-            .join("")
-        : "<li>Probability output not available for this model.</li>";
-
     card.innerHTML = `
         <span class="result-chip">${isPositive ? "Higher risk pattern" : "Lower risk pattern"}</span>
         <h4>${prettifyDiseaseName(disease)}</h4>
-        <p class="results-note">Model reading: <strong>${result.risk_label.replaceAll("_", " ")}</strong></p>
-        <ul class="probability-list">${probabilityItems}</ul>
+        <p class="results-note">
+            ${isPositive
+                ? "This screening suggests you may want to review this area more closely."
+                : "This screening does not currently show a strong concern in this area."}
+        </p>
     `;
 
     return card;
@@ -153,7 +147,7 @@ async function submitForm(event) {
     const payload = normalizePayload(formData);
     const patientName = formData.get("patient_name") || "Patient";
 
-    submitStatus.textContent = "Running all four models...";
+    submitStatus.textContent = "Preparing your screening summary...";
     resultCards.innerHTML = "";
 
     try {
@@ -171,7 +165,7 @@ async function submitForm(event) {
             throw new Error(data.detail || "Prediction request failed.");
         }
 
-        resultsNote.textContent = `${patientName}'s screening results are ready.`;
+        resultsNote.textContent = `${patientName}'s screening summary is ready.`;
 
         Object.entries(data.predictions || {}).forEach(([disease, result]) => {
             resultCards.appendChild(buildResultCard(disease, result));
@@ -181,7 +175,7 @@ async function submitForm(event) {
             resultCards.appendChild(buildSkippedCard(disease, reason));
         });
 
-        submitStatus.textContent = "Predictions generated successfully.";
+        submitStatus.textContent = "Screening summary generated successfully.";
     } catch (error) {
         submitStatus.textContent = error.message;
         resultsNote.textContent = "The request could not be completed.";

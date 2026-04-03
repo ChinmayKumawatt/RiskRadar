@@ -10,19 +10,19 @@
     <div class="page-shell">
         <aside class="hero-panel">
             <p class="eyebrow">RiskRadar</p>
-            <h1>Multi-disease screening, one guided intake.</h1>
+            <h1>Personal health screening in one guided form.</h1>
             <p class="hero-copy">
-                Shared inputs like age, sex, and BMI are captured once and reused across
-                heart, diabetes, kidney, and hypertension risk models.
+                Answer a few simple questions about general health, lifestyle, and
+                medical history to get a quick screening summary.
             </p>
             <div class="hero-card">
-                <p class="hero-card-label">Flow</p>
+                <p class="hero-card-label">What you will fill</p>
                 <ol>
                     <li>General information</li>
-                    <li>Lifestyle and vitals</li>
-                    <li>Heart risk details</li>
-                    <li>Diabetes details</li>
-                    <li>Kidney details</li>
+                    <li>Health and lifestyle</li>
+                    <li>Heart-related questions</li>
+                    <li>Diabetes-related questions</li>
+                    <li>Kidney-related questions</li>
                     <li>Review and predict</li>
                 </ol>
             </div>
@@ -31,8 +31,8 @@
         <main class="form-panel">
             <header class="topbar">
                 <div>
-                    <p class="eyebrow">Local Test UI</p>
-                    <h2>Patient Intake Form</h2>
+                    <p class="eyebrow">Health Screening</p>
+                    <h2>Health Check Form</h2>
                 </div>
                 <div class="progress-shell">
                     <div class="progress-label">
@@ -49,7 +49,7 @@
                 <section class="step-card active" data-step="0" data-title="General information">
                     <div class="section-heading">
                         <h3>General information</h3>
-                        <p>Collect the shared identity and baseline inputs once.</p>
+                        <p>Start with a few basic personal details.</p>
                     </div>
 
                     <div class="field-grid two-up">
@@ -90,8 +90,8 @@
 
                 <section class="step-card" data-step="1" data-title="Lifestyle and vitals">
                     <div class="section-heading">
-                        <h3>Lifestyle and vitals</h3>
-                        <p>These shared vitals are captured once and reused across multiple models.</p>
+                        <h3>Health and lifestyle</h3>
+                        <p>Fill in the health details you know. Use the suggested values if you are unsure.</p>
                     </div>
 
                     <div class="field-grid two-up">
@@ -106,7 +106,7 @@
                                 <option value="140">High range</option>
                                 <option value="118">I don't know, use a normal value</option>
                             </select>
-                            <small>Used for heart and diabetes screening.</small>
+                            <small>Enter your usual blood pressure reading if you know it.</small>
                         </label>
 
                         <label class="field">
@@ -119,7 +119,7 @@
                                 <option value="90">Higher kidney-dataset range</option>
                                 <option value="80">I don't know, use a typical value</option>
                             </select>
-                            <small>This stays separate because the CKD model was trained on a different blood-pressure feature scale.</small>
+                            <small>If you are unsure, leave it on the suggested typical value.</small>
                         </label>
 
                         <label class="field">
@@ -132,7 +132,7 @@
                                 <option value="20">Heavy smoker</option>
                                 <option value="0">I don't know / prefer not to say</option>
                             </select>
-                            <small>Converted to an approximate daily cigarette count for the model.</small>
+                            <small>Choose the option that best matches your smoking habit.</small>
                         </label>
 
                         <label class="field">
@@ -155,7 +155,7 @@
                                 <option value="260">High</option>
                                 <option value="190">I don't know, use a common healthy value</option>
                             </select>
-                            <small>MedlinePlus total cholesterol ranges informed these presets.</small>
+                            <small>Use your latest total cholesterol value if available.</small>
                         </label>
 
                         <label class="field">
@@ -168,15 +168,15 @@
                                 <option value="105">High</option>
                                 <option value="72">I don't know, use a normal resting rate</option>
                             </select>
-                            <small>American Heart Association resting-heart-rate guidance informed these presets.</small>
+                            <small>Your usual resting heart rate is best if you know it.</small>
                         </label>
                     </div>
                 </section>
 
                 <section class="step-card" data-step="2" data-title="Heart assessment">
                     <div class="section-heading">
-                        <h3>Heart assessment</h3>
-                        <p>Model-specific features for coronary risk screening.</p>
+                        <h3>Heart health</h3>
+                        <p>Answer the questions below based on symptoms or past medical tests.</p>
                     </div>
 
                     <div class="field-grid two-up">
@@ -190,7 +190,7 @@
                                 <option value="3">No chest pain / asymptomatic</option>
                                 <option value="3">I don't know</option>
                             </select>
-                            <small>This maps your answer to the heart-model chest-pain category.</small>
+                            <small>Choose the option that sounds closest to your experience.</small>
                         </label>
 
                         <label class="field">
@@ -203,7 +203,7 @@
                                 <option value="180">High</option>
                                 <option value="152">I don't know, use a typical test value</option>
                             </select>
-                            <small>Most users will not know this exactly. The fallback uses a typical dataset value.</small>
+                            <small>If you have done an exercise or treadmill test, enter that value. Otherwise use the fallback.</small>
                         </label>
 
                         <label class="field">
@@ -226,15 +226,15 @@
                                 <option value="0">Category 0 / unknown-coded</option>
                                 <option value="2">I don't know</option>
                             </select>
-                            <small>This lab/test field is rarely known by patients. The fallback uses the model's most common category.</small>
+                            <small>If you have never heard of this test, choose I don't know.</small>
                         </label>
                     </div>
                 </section>
 
                 <section class="step-card" data-step="3" data-title="Diabetes assessment">
                     <div class="section-heading">
-                        <h3>Diabetes assessment</h3>
-                        <p>Glucose details for the diabetes model. Shared blood pressure is reused automatically.</p>
+                        <h3>Diabetes health</h3>
+                        <p>Enter your blood sugar information if you know it.</p>
                     </div>
 
                     <div class="field-grid two-up">
@@ -248,15 +248,15 @@
                                 <option value="140">Diabetes-range high</option>
                                 <option value="95">I don't know, use a normal fasting value</option>
                             </select>
-                            <small>CDC fasting blood-sugar ranges informed these presets.</small>
+                            <small>Use a fasting glucose value if you have one from a recent test.</small>
                         </label>
                     </div>
                 </section>
 
                 <section class="step-card" data-step="4" data-title="Kidney assessment">
                     <div class="section-heading">
-                        <h3>Kidney assessment</h3>
-                        <p>Kidney-specific inputs. This section uses the CKD blood-pressure field instead of the general one.</p>
+                        <h3>Kidney health</h3>
+                        <p>These questions help estimate kidney-related health risk.</p>
                     </div>
 
                     <div class="field-grid two-up">
@@ -295,33 +295,34 @@
                 <section class="step-card" data-step="5" data-title="Review and predict">
                     <div class="section-heading">
                         <h3>Review and predict</h3>
-                        <p>Submit once to receive all four model outputs together.</p>
+                        <p>Submit the form to generate your screening summary.</p>
                     </div>
 
                     <div class="review-grid">
                         <div class="review-card">
-                            <p class="review-label">Shared once</p>
+                            <p class="review-label">Included in this form</p>
                             <ul>
-                                <li>Name and age</li>
-                                <li>Sex and BMI</li>
-                                <li>Blood pressure and cholesterol</li>
-                                <li>Lifestyle and vitals</li>
+                                <li>Personal details</li>
+                                <li>Health and lifestyle information</li>
+                                <li>Heart-related questions</li>
+                                <li>Diabetes-related questions</li>
+                                <li>Kidney-related questions</li>
                             </ul>
                         </div>
                         <div class="review-card">
-                            <p class="review-label">Model coverage</p>
+                            <p class="review-label">Screening summary</p>
                             <ul>
-                                <li>Heart</li>
-                                <li>Diabetes</li>
-                                <li>CKD</li>
-                                <li>Hypertension</li>
+                                <li>Heart health</li>
+                                <li>Diabetes health</li>
+                                <li>Kidney health</li>
+                                <li>Blood pressure-related risk</li>
                             </ul>
                         </div>
                         <div class="review-card">
-                            <p class="review-label">Unknown handling</p>
+                            <p class="review-label">If you are unsure</p>
                             <ul>
-                                <li>Clinical ranges fill measurable values like BMI, glucose, blood pressure, cholesterol, and heart rate.</li>
-                                <li>Rare encoded features fall back to common or neutral model-safe values.</li>
+                                <li>You can use the suggested values in many fields.</li>
+                                <li>Unknown answers are handled with safe fallback values where available.</li>
                             </ul>
                         </div>
                     </div>
@@ -343,10 +344,10 @@
             <section class="results-panel" id="resultsPanel">
                 <div class="results-header">
                     <div>
-                        <p class="eyebrow">Predictions</p>
-                        <h3>Risk summary</h3>
+                        <p class="eyebrow">Results</p>
+                        <h3>Health screening summary</h3>
                     </div>
-                    <p class="results-note" id="resultsNote">Submit the form to see model output.</p>
+                    <p class="results-note" id="resultsNote">Submit the form to see your screening summary.</p>
                 </div>
                 <div id="resultCards" class="result-cards"></div>
             </section>
