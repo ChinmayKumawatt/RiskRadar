@@ -8,9 +8,11 @@ const progressFill = document.getElementById("progressFill");
 const submitStatus = document.getElementById("submitStatus");
 const resultsNote = document.getElementById("resultsNote");
 const resultCards = document.getElementById("resultCards");
+const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const presetSelects = Array.from(document.querySelectorAll(".preset-select"));
 
 let currentStep = 0;
+let latestReportPayload = null;
 
 function updateStepState() {
     steps.forEach((step, index) => {
@@ -146,9 +148,14 @@ async function submitForm(event) {
     const formData = new FormData(form);
     const payload = normalizePayload(formData);
     const patientName = formData.get("patient_name") || "Patient";
+    latestReportPayload = {
+        patient_name: patientName,
+        inputs: payload,
+    };
 
     submitStatus.textContent = "Preparing your screening summary...";
     resultCards.innerHTML = "";
+    downloadPdfBtn.style.display = "none";
 
     try {
         const response = await fetch("/predict/all", {
@@ -176,9 +183,49 @@ async function submitForm(event) {
         });
 
         submitStatus.textContent = "Screening summary generated successfully.";
+        downloadPdfBtn.style.display = "inline-flex";
     } catch (error) {
         submitStatus.textContent = error.message;
         resultsNote.textContent = "The request could not be completed.";
+    }
+}
+
+async function downloadPdfReport() {
+    if (!latestReportPayload) {
+        return;
+    }
+
+    downloadPdfBtn.disabled = true;
+    downloadPdfBtn.textContent = "Preparing PDF...";
+
+    try {
+        const response = await fetch("/report/pdf", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(latestReportPayload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || "Failed to generate PDF report.");
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = "riskradar-health-report.pdf";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        submitStatus.textContent = error.message;
+    } finally {
+        downloadPdfBtn.disabled = false;
+        downloadPdfBtn.textContent = "Download Health Report PDF";
     }
 }
 
@@ -203,6 +250,7 @@ nextBtn.addEventListener("click", () => {
 });
 
 form.addEventListener("submit", submitForm);
+downloadPdfBtn.addEventListener("click", downloadPdfReport);
 
 presetSelects.forEach((selectElement) => {
     selectElement.addEventListener("change", () => {

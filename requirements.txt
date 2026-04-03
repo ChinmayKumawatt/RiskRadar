@@ -10,3 +10,4 @@ dill
 joblib
 fastapi
 uvicorn
+reportlab

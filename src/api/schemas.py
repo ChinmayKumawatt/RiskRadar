@@ -61,3 +61,8 @@ class MetadataResponse(BaseModel):
     disease_features: dict[str, list[str]]
     feature_aliases: dict[str, dict[str, str]]
     all_features: list[str]
+
+
+class ReportRequest(BaseModel):
+    patient_name: str | None = None
+    inputs: RiskInput

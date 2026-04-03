@@ -3,20 +3,24 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.api.schemas import (
     BulkPredictionResponse,
     MetadataResponse,
     PredictionResponse,
+    ReportRequest,
     RiskInput,
     prediction_service,
 )
+from src.api.services.health_report_service import HealthReportService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.prediction_service = prediction_service
+    app.state.health_report_service = HealthReportService(prediction_service)
     yield
 
 
@@ -36,6 +40,10 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 def get_prediction_service():
     return app.state.prediction_service
+
+
+def get_health_report_service():
+    return app.state.health_report_service
 
 
 @app.get("/")
@@ -84,3 +92,20 @@ def predict_disease(disease_name: str, payload: RiskInput):
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.post("/report/pdf")
+def download_pdf_report(payload: ReportRequest):
+    report_service = get_health_report_service()
+    pdf_buffer = report_service.generate_pdf(
+        patient_name=payload.patient_name,
+        request_payload=payload.inputs.model_dump(),
+    )
+    filename = "riskradar-health-report.pdf"
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"'
+        },
+    )
