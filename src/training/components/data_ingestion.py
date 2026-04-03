@@ -7,23 +7,24 @@ from sklearn.model_selection import train_test_split
 from src.utils.logger import logger
 from src.utils.exception import CustomException
 
+class DataIngestionArtifact:
+    def __init__(self, train_file_path, test_file_path):
+        self.train_file_path = train_file_path
+        self.test_file_path = test_file_path
+
 class DataIngestion:
-    def __init__(self,dataset_path,target_column,selected_features,save_location_train,save_location_test):
-        self.dataset_path = dataset_path
-        self.target_column = target_column
-        self.selected_features = selected_features
-        self.save_location_train = save_location_train
-        self.save_location_test = save_location_test
+    def __init__(self,config):
+        self.config = config
 
     def initiate_data_ingestion(self):
         try:
             logger.info("Data ingestion initiated")
 
-            df = pd.read_csv(self.dataset_path)
+            df = pd.read_csv(self.config.dataset_path)
             logger.info("Dataset Read")
       
-            X = df[self.selected_features]
-            y = df[self.target_column]
+            X = df[self.config.selected_features]
+            y = df[self.config.target_column]
             
             X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)
 
@@ -32,17 +33,20 @@ class DataIngestion:
             logger.info(f"Shape of train set {train_df.shape}")
             logger.info(f"Shape of test set {test_df.shape}")
 
-            os.makedirs(os.path.dirname(self.save_location_train), exist_ok=True)
-            os.makedirs(os.path.dirname(self.save_location_test), exist_ok=True)
+            os.makedirs(os.path.dirname(self.config.save_location_train), exist_ok=True)
+            os.makedirs(os.path.dirname(self.config.save_location_test), exist_ok=True)
 
             # train_path = os.path.join(self.save_location_train)
             # test_path = os.path.join(self.save_location_test)
 
-            train_df.to_csv(self.save_location_train, index = False)
-            test_df.to_csv(self.save_location_test, index = False)
+            train_df.to_csv(self.config.save_location_train, index = False)
+            test_df.to_csv(self.config.save_location_test, index = False)
             logger.info("Train and test datasets saved successfully")
 
-            return self.save_location_train, self.save_location_test
+            return DataIngestionArtifact(
+                train_file_path=self.config.save_location_train,
+                test_file_path=self.config.save_location_test
+            )
         
         except Exception as e:
             raise CustomException(e,sys)

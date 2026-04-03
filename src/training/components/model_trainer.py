@@ -8,15 +8,21 @@ from src.utils.exception import CustomException
 from src.utils.logger import logger
 from src.utils.common import save_object,evaluate_models
 
+class ModelTrainerArtifact:
+    def __init__(self, model_path, best_model_name, best_score, best_threshold):
+        self.model_path = model_path
+        self.best_model_name = best_model_name
+        self.best_score = best_score
+        self.best_threshold = best_threshold
+
 class ModelTrainer:
-    def __init__(self,train_arr,test_arr):
-        self.train_path = train_arr
-        self.test_path  = test_arr
+    def __init__(self,config):
+        self.config = config
 
     def initiate_model_training(self):
         try:
-            train_arr = self.data_transformation_artifact.train_arr
-            test_arr = self.data_transformation_artifact.test_arr
+            train_arr = np.load(self.config.train_arr_path)
+            test_arr = np.load(self.config.test_arr_path)
 
             X_train, y_train, X_test, y_test = (
                 train_arr[:, :-1],
@@ -68,13 +74,14 @@ class ModelTrainer:
 
             best_threshold = models_report[best_model_name]["best_threshold"]
 
-            save_object(self.model_trainer_config.trained_model_file_path, best_model)
+            save_object(self.config.model_save_path, best_model)
 
-            return {
-                "best_model_name": best_model_name,
-                "best_score": best_score,
-                "best_threshold": best_threshold
-            }
+            return ModelTrainerArtifact(
+                model_path=self.config.model_save_path,
+                best_model_name=best_model_name,
+                best_score=best_score,
+                best_threshold=best_threshold
+            )
 
         except Exception as e:
             raise CustomException(e, sys)

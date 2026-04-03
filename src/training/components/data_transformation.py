@@ -10,27 +10,28 @@ from src.utils.logger import logger
 from src.utils.exception import CustomException
 from src.utils.common import save_object
 
-class DataTransformation:
-    
-    def __init__(self,train_path,test_path,target_column,save_location_train_arr,save_location_test_arr,preprocessor_path,encoder_path):
-        self.train_path = train_path
-        self.test_path = test_path
-        self.target_column = target_column
-        self.save_location_train_arr = save_location_train_arr
-        self.save_location_test_arr = save_location_test_arr
+class DataTransformationArtifact:
+    def __init__(self, train_arr_path, test_arr_path, preprocessor_path, encoder_path):
+        self.train_arr_path = train_arr_path
+        self.test_arr_path = test_arr_path
         self.preprocessor_path = preprocessor_path
         self.encoder_path = encoder_path
 
+class DataTransformation:
+    
+    def __init__(self,config):
+        self.config = config
+
     def initiate_data_transformation(self):
         try:
-            train_df = pd.read_csv(self.train_path)
-            test_df = pd.read_csv(self.test_path)
+            train_df = pd.read_csv(self.config.train_path)
+            test_df = pd.read_csv(self.config.test_path)
             logger.info("Datasets Read Successfully")
 
-            X_train = train_df.drop(self.target_column,axis=1)
-            X_test = test_df.drop(self.target_column,axis=1)
-            y_train = train_df[self.target_column]
-            y_test = test_df[self.target_column]
+            X_train = train_df.drop(self.config.target_column,axis=1)
+            X_test = test_df.drop(self.config.target_column,axis=1)
+            y_train = train_df[self.config.target_column]
+            y_test = test_df[self.config.target_column]
             logger.info("DataSet Splitted Successfully")
             label_encoder = LabelEncoder()
 
@@ -73,17 +74,23 @@ class DataTransformation:
                 test_features_processed,np.array(y_test)
             ]
 
-            os.makedirs(os.path.dirname(self.save_location_train_arr), exist_ok=True)
-            os.makedirs(os.path.dirname(self.save_location_test_arr), exist_ok=True)
-            os.makedirs(os.path.dirname(self.preprocessor_path), exist_ok=True)
-            os.makedirs(os.path.dirname(self.encoder_path), exist_ok=True)
+            os.makedirs(os.path.dirname(self.config.save_location_train_arr), exist_ok=True)
+            os.makedirs(os.path.dirname(self.config.save_location_test_arr), exist_ok=True)
+            os.makedirs(os.path.dirname(self.config.preprocessor_path), exist_ok=True)
+            os.makedirs(os.path.dirname(self.config.encoder_path), exist_ok=True)
 
-            np.save(self.save_location_train_arr, train_arr)
-            np.save(self.save_location_test_arr, test_arr)
+            np.save(self.config.save_location_train_arr, train_arr)
+            np.save(self.config.save_location_test_arr, test_arr)
             logger.info("Train and test array saved successfully")
-            save_object(self.preprocessor_path, preprocessor)
-            save_object(self.encoder_path, label_encoder)
+            save_object(self.config.preprocessor_path, preprocessor)
+            save_object(self.config.encoder_path, label_encoder)
             logger.info("Preprocessor and encoder saved")
-            return train_arr,test_arr
+
+            return DataTransformationArtifact(
+                train_arr_path=self.config.save_location_train_arr,
+                test_arr_path=self.config.save_location_test_arr,
+                preprocessor_path=self.config.preprocessor_path,
+                encoder_path=self.config.encoder_path
+                )
         except Exception as e:
             raise CustomException(e,sys)
